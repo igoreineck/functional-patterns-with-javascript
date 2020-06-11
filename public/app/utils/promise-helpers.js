@@ -17,3 +17,18 @@ export const timeoutPromise = (miliseconds, promise) => {
   );
   return Promise.race([timeout, promise]);
 };
+
+// Adding a delay into async operations
+export const delay = miliseconds => data =>
+  new Promise((resolve, reject) =>
+    setTimeout(() => resolve(data), miliseconds),
+  );
+
+// Adding a retry operation to an executed method
+export const retry = (retries, milliseconds, fn) =>
+  fn().catch(err => {
+    console.log(retries);
+    return delay(milliseconds)().then(() =>
+      retries > 1 ? retry(--retries, milliseconds, fn) : Promise.reject(err),
+    );
+  });
